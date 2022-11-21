@@ -1,3 +1,6 @@
+#NE PAS LEAK LE TOKEN
+config.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
