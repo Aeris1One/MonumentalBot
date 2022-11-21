@@ -24,7 +24,7 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.command(
         name="sync",
-        description="Synchonizes the slash commands.",
+        description="Synchroniser les commandes slash.",
     )
     @app_commands.describe(scope="The scope of the sync. Can be `global` or `guild`")
     @checks.is_owner()
@@ -64,7 +64,7 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.command(
         name="unsync",
-        description="Unsynchonizes the slash commands.",
+        description="Désynchroniser les commandes slash.",
     )
     @app_commands.describe(scope="The scope of the sync. Can be `global`, `current_guild` or `guild`")
     @checks.is_owner()
@@ -105,7 +105,7 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.hybrid_command(
         name="load",
-        description="Load a cog",
+        description="Charger un cog",
     )
     @app_commands.describe(cog="The name of the cog to load")
     @checks.is_owner()
@@ -135,7 +135,7 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.hybrid_command(
         name="unload",
-        description="Unloads a cog.",
+        description="Décharger un cog.",
     )
     @app_commands.describe(cog="The name of the cog to unload")
     @checks.is_owner()
@@ -165,7 +165,7 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.hybrid_command(
         name="reload",
-        description="Reloads a cog.",
+        description="Recharger un cog.",
     )
     @app_commands.describe(cog="The name of the cog to reload")
     @checks.is_owner()
@@ -195,7 +195,7 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.hybrid_command(
         name="shutdown",
-        description="Make the bot shutdown.",
+        description="Éteindre le bot.",
     )
     @checks.is_owner()
     async def shutdown(self, context: Context) -> None:
@@ -213,7 +213,7 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.hybrid_command(
         name="say",
-        description="The bot will say anything you want.",
+        description="Faire dire quelque-chose au bot.",
     )
     @app_commands.describe(message="The message that should be repeated by the bot")
     @checks.is_owner()
@@ -247,7 +247,7 @@ class Owner(commands.Cog, name="owner"):
 
     @commands.hybrid_group(
         name="blacklist",
-        description="Get the list of all blacklisted users.",
+        description="Obtenir la liste des utilisateurs en blacklist.",
     )
     @checks.is_owner()
     async def blacklist(self, context: Context) -> None:
@@ -267,7 +267,7 @@ class Owner(commands.Cog, name="owner"):
     @blacklist.command(
         base="blacklist",
         name="add",
-        description="Lets you add a user from not being able to use the bot.",
+        description="Ajouter un utilisateur à la blacklist.",
     )
     @app_commands.describe(user="The user that should be added to the blacklist")
     @checks.is_owner()
@@ -301,7 +301,7 @@ class Owner(commands.Cog, name="owner"):
     @blacklist.command(
         base="blacklist",
         name="remove",
-        description="Lets you remove a user from not being able to use the bot.",
+        description="Retirer un utilisateur de la blacklist.",
     )
     @app_commands.describe(user="The user that should be removed from the blacklist.")
     @checks.is_owner()

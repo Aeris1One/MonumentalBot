@@ -111,7 +111,7 @@ async def status_task() -> None:
     """
     Setup the game status task of the bot
     """
-    statuses = ["with you!", "with Krypton!", "with humans!"]
+    statuses = ["observer les humains","stalk les gens","emmerder les CPI A1"]
     await bot.change_presence(activity=discord.Game(random.choice(statuses)))
 
 
@@ -156,8 +156,8 @@ async def on_command_error(context: Context, error) -> None:
         hours, minutes = divmod(minutes, 60)
         hours = hours % 24
         embed = discord.Embed(
-            title="Hey, please slow down!",
-            description=f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
+            title="Hé ! Ralentis un peu !",
+            description=f"Tu pourras réutiliser cette commande dans {f'{round(hours)} heures' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} secondes' if round(seconds) > 0 else ''}.",
             color=0xE02B2B
         )
         await context.send(embed=embed)
@@ -167,8 +167,8 @@ async def on_command_error(context: Context, error) -> None:
         the @checks.not_blacklisted() check in your command, or you can raise the error by yourself.
         """
         embed = discord.Embed(
-            title="Error!",
-            description="You are blacklisted from using the bot.",
+            title="Erreur !",
+            description="Tu es sur la blacklist du bot.",
             color=0xE02B2B
         )
         await context.send(embed=embed)
@@ -177,22 +177,22 @@ async def on_command_error(context: Context, error) -> None:
         Same as above, just for the @checks.is_owner() check.
         """
         embed = discord.Embed(
-            title="Error!",
-            description="You are not the owner of the bot!",
+            title="Erreur !",
+            description="Tu n'es pas administrateur du bot.",
             color=0xE02B2B
         )
         await context.send(embed=embed)
     elif isinstance(error, commands.MissingPermissions):
         embed = discord.Embed(
-            title="Error!",
-            description="You are missing the permission(s) `" + ", ".join(
-                error.missing_permissions) + "` to execute this command!",
+            title="Erreur !",
+            description="Il te manques la/les permissions(s) `" + ", ".join(
+                error.missing_permissions) + "` pour éxécuter cette commande !",
             color=0xE02B2B
         )
         await context.send(embed=embed)
     elif isinstance(error, commands.MissingRequiredArgument):
         embed = discord.Embed(
-            title="Error!",
+            title="Erreur !",
             # We need to capitalize because the command arguments have no capital letter in the code.
             description=str(error).capitalize(),
             color=0xE02B2B

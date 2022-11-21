@@ -21,7 +21,7 @@ class Template(commands.Cog, name="template"):
 
     @commands.hybrid_command(
         name="testcommand",
-        description="This is a testing command that does nothing.",
+        description="Commande de test qui ne fais rien.",
     )
     # This will only allow non-blacklisted members to execute the command
     @checks.not_blacklisted()
