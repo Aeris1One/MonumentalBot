@@ -145,3 +145,4 @@ cython_debug/
 
 # SQLITE database
 *.db
+config.json
