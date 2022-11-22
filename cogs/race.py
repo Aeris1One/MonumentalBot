@@ -3,6 +3,7 @@ import random
 from typing import Literal
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
 
@@ -123,6 +124,18 @@ class FancyDictList(dict):
         value = self[key] = []
         return value
 
+class JoinButton(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.value = None
+
+    @discord.ui.button(emoji="🏁",label="Prendre le départ", style=discord.ButtonStyle.blurple, disabled=True)
+    async def join(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Ce bouton c'est de la merde il marche pas !", ephemeral=True)
+
+    @discord.ui.button(emoji="🤔",label="Pourquoi c'est grisé ?", style=discord.ButtonStyle.blurple, disabled=False)
+    async def why(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Parce que je suis trop con pour arriver à faire fonctionner ce bouton correctement.\n-- Charles", ephemeral=True)
 
 class Race(commands.Cog):
     """Cog for racing animals"""
@@ -149,27 +162,33 @@ class Race(commands.Cog):
         name="start",
         description="Démarrer une course.",
     )
-    async def start(self, ctx):
+    @app_commands.describe(zoo="Activer le mode zoo ?", wait="Combien de temps attendre pour que les joueurs rejoignent ? (entre 10 et 60 secondes, défaut 30)")
+    async def start(self, ctx: Context, zoo: bool = False, wait: int = 30):
         """Begins a new race.
         You cannot start a new race until the active on has ended.
         If you are the only player in the race, you will race against
         your bot.
         The user who started the race is automatically entered into the race.
         """
+        if wait < 10 or wait > 60:
+            return await ctx.send("Le temps d'attente doit être compris entre 10 et 60 secondes.", ephemeral=True)
         if self.active[ctx.guild.id]:
-            return await ctx.send(f"Une course est déjà en cours !  Utilisez `/race enter` pour la rejoindre !")
+            return await ctx.send(f"Une course est déjà en cours !  Utilisez `/race enter` pour la rejoindre !", ephemeral=True)
         self.active[ctx.guild.id] = True
         self.players[ctx.guild.id].append(ctx.author)
-        wait = 20
+        buttons = JoinButton()
         await ctx.send(
             f"🚩 Une course a démarré ! Utilisez `/race enter` pour la rejoindre ! 🚩"
-            f"\nLa course commencera dans {wait} secondes !"
+            f"\nLa course commencera dans {wait} secondes !", view=buttons
         )
         await ctx.send(f"**{ctx.author.mention}** a rejoint la course !")
         await asyncio.sleep(wait)
         self.started[ctx.guild.id] = True
-        await ctx.send("🏁 La course a maintenant débuté. 🏁")
-        await self.run_game(ctx)
+        if zoo:
+            await ctx.send("🏁 La course démarre MAINTENANT ! 🏁\n:leopard: :ox: :snail: :water_buffalo: Mode Zoo activé ! :camel: :elephant: :dog2: :hippopotamus:")
+        else:
+            await ctx.send("🏁 La course démarre MAINTENANT ! 🏁")
+        await self.run_game(ctx, zoo)
 
         msg, embed = await self._build_end_screen(ctx)
         await ctx.send(content=msg, embed=embed)
@@ -180,7 +199,7 @@ class Race(commands.Cog):
         name="enter",
         description="Rejoindre une course.",
     )
-    async def enter(self, ctx):
+    async def enter(self, ctx: Context):
         """Allows you to enter the race.
         This command will return silently if a race has already started.
         By not repeatedly telling the user that they can't enter the race, this
@@ -188,17 +207,16 @@ class Race(commands.Cog):
         """
         if self.started[ctx.guild.id]:
             return await ctx.send(
-                "Une course a déjà démarré. Merci d'attendre qu'elle se termine avant d'en rejoindre une autre."
-            )
+                "Une course a déjà démarré. Merci d'attendre qu'elle se termine avant d'en rejoindre une autre.", ephemeral=True)
         elif not self.active.get(ctx.guild.id):
-            return await ctx.send("Une course doit être lancée pour pouvoir la rejoindre.")
+            return await ctx.send("Une course doit être lancée pour pouvoir la rejoindre.", ephemeral=True)
         elif ctx.author in self.players[ctx.guild.id]:
-            return await ctx.send("Vous êtes déjà dans la course.")
+            return await ctx.send("Vous êtes déjà dans la course.", ephemeral=True)
         elif len(self.players[ctx.guild.id]) >= 14:
-            return await ctx.send("Le maximum de participants a été atteint.")
+            return await ctx.send("Le maximum de participants a été atteint.", ephemeral=True)
         else:
             self.players[ctx.guild.id].append(ctx.author)
-            await ctx.send(f"{ctx.author.mention} a rejoint la course.")
+            await ctx.send(f"{ctx.author.mention} est prêt à courir !")
 
     @race.command(
         base="race",
@@ -235,16 +253,15 @@ class Race(commands.Cog):
         if third:
             embed.add_field(name=f"{third[0].display_name} 🥉", value=third[1].emoji)
         #embed.add_field(name="-" * 90, value="\u200b", inline=False)
-        embed.set_footer(text="Félicitations aux participants !")
+        #embed.set_footer(text="Félicitations aux participants !")
         mentions = "" if first[0].bot else f"{first[0].mention}"
         mentions += "" if second[0].bot else f", {second[0].mention}" if not first[0].bot else f"{second[0].mention}"
         mentions += "" if third is None or third[0].bot else f", {third[0].mention}"
         return mentions, embed
 
-    async def _game_setup(self, ctx):
-        mode = "zoo"
+    async def _game_setup(self, ctx, zoo: bool):
         users = self.players[ctx.guild.id]
-        if mode == "zoo":
+        if zoo:
             players = [(Animal(*random.choice(racers)), user) for user in users]
             if len(players) == 1:
                 players.append((Animal(*random.choice(racers)), ctx.bot.user))
@@ -254,8 +271,8 @@ class Race(commands.Cog):
                 players.append((Animal(":turtle:", "slow"), ctx.bot.user))
         return players
 
-    async def run_game(self, ctx):
-        players = await self._game_setup(ctx)
+    async def run_game(self, ctx, zoo: bool):
+        players = await self._game_setup(ctx, zoo)
         setup = "\u200b\n" + "\n".join(
             f":carrot: **{animal.current}** 🏁[{jockey.display_name}]" for animal, jockey in players
         )

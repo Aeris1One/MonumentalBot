@@ -124,14 +124,14 @@ class Owner(commands.Cog, name="owner"):
                 description=f"Could not load the `{cog}` cog.",
                 color=0xE02B2B
             )
-            await context.send(embed=embed)
+            await context.send(embed=embed, ephemeral=True)
             return
         embed = discord.Embed(
             title="Load",
             description=f"Successfully loaded the `{cog}` cog.",
             color=0x9C84EF
         )
-        await context.send(embed=embed)
+        await context.send(embed=embed, ephemeral=True)
 
     @commands.hybrid_command(
         name="unload",
@@ -154,14 +154,14 @@ class Owner(commands.Cog, name="owner"):
                 description=f"Could not unload the `{cog}` cog.",
                 color=0xE02B2B
             )
-            await context.send(embed=embed)
+            await context.send(embed=embed, ephemeral=True)
             return
         embed = discord.Embed(
             title="Unload",
             description=f"Successfully unloaded the `{cog}` cog.",
             color=0x9C84EF
         )
-        await context.send(embed=embed)
+        await context.send(embed=embed, ephemeral=True)
 
     @commands.hybrid_command(
         name="reload",
@@ -184,14 +184,14 @@ class Owner(commands.Cog, name="owner"):
                 description=f"Could not reload the `{cog}` cog.",
                 color=0xE02B2B
             )
-            await context.send(embed=embed)
+            await context.send(embed=embed, ephemeral=True)
             return
         embed = discord.Embed(
             title="Reload",
             description=f"Successfully reloaded the `{cog}` cog.",
             color=0x9C84EF
         )
-        await context.send(embed=embed)
+        await context.send(embed=embed, ephemeral=True)
 
     @commands.hybrid_command(
         name="shutdown",

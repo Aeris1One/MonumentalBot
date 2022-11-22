@@ -83,7 +83,7 @@ class RockPaperScissors(discord.ui.Select):
             result_embed.description = f"**Vous gagnez !**\nVous avez choisi {user_choice} et j'ai choisi {bot_choice}."
             result_embed.colour = 0x9C84EF
         else:
-            result_embed.description = f"**J'ai gagné !**\nYou've chosen {user_choice} and I've chosen {bot_choice}."
+            result_embed.description = f"**J'ai gagné !**\nVous avez choisi {user_choice} et j'ai choisi {bot_choice}."
             result_embed.colour = 0xE02B2B
         await interaction.response.edit_message(embed=result_embed, content=None, view=None)
 

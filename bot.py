@@ -111,7 +111,7 @@ async def status_task() -> None:
     """
     Setup the game status task of the bot
     """
-    statuses = ["observer les humains","stalk les gens","emmerder les CPI A1"]
+    statuses = ["observer les humains","stalk les gens","écouter Hazah Beats","emmerder les CPI A1"]
     await bot.change_presence(activity=discord.Game(random.choice(statuses)))
 
 

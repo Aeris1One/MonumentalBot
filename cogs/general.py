@@ -163,14 +163,12 @@ class General(commands.Cog, name="general"):
                    "Oui - sûrement.", "D'aprés moi, oui.", "Probablement.", "Il semblerait.", "Oui.",
                    "Les signes semblent dire que oui.", "Je n'ai pas de réponse, réessayez.", "Et si vous essayiez plus tard.", "Il vaut mieux ne rien dire pour l'instant.",
                    "Je ne peux rien prédire pour l'instant.", "Laissez-moi me concentrer et réessayez plus tard.", "Ne comptez pas là-dessus.", "Ma réponse est non.",
-                   "Mes sources me disent que non.", "Ça ne semble pas bon.", "Vraiment peu probable."]
+                   "Mes sources me disent que non.", "Il ne semble pas, non.", "Vraiment peu probable.", "Pas officiellement.", "Ce n'est pas impossible.", "Pourquoi pas.",
+                   "Ce n'est pas impossible.", "Tant que ce n'est pas illégal.", "Comme vous voulez.", "Je n'en sais foutrement rien."]
         embed = discord.Embed(
-            title="**Ma réponse:**",
+            title=f"{question}",
             description=f"{random.choice(answers)}",
             color=0x9C84EF
-        )
-        embed.set_footer(
-            text=f"La question était: {question}"
         )
         await context.send(embed=embed)
 
