@@ -7,6 +7,12 @@ from discord import app_commands
 from discord.ext import commands
 from discord.ext.commands import Context
 
+from PIL import Image
+from io import BytesIO
+from PIL import ImageFont
+from PIL import ImageDraw
+from PIL import ImageOps
+
 from helpers import checks
 
 racers = (
@@ -170,7 +176,7 @@ class Race(commands.Cog):
         your bot.
         The user who started the race is automatically entered into the race.
         """
-        if wait < 10 or wait > 60:
+        if wait < 1 or wait > 60:
             return await ctx.send("Le temps d'attente doit être compris entre 10 et 60 secondes.", ephemeral=True)
         if self.active[ctx.guild.id]:
             return await ctx.send(f"Une course est déjà en cours !  Utilisez `/race enter` pour la rejoindre !", ephemeral=True)
@@ -190,8 +196,8 @@ class Race(commands.Cog):
             await ctx.send("🏁 La course démarre MAINTENANT ! 🏁")
         await self.run_game(ctx, zoo)
 
-        msg, embed = await self._build_end_screen(ctx)
-        await ctx.send(content=msg, embed=embed)
+        msg, file = await self._build_end_screen(ctx)
+        await ctx.send(content=msg, file=file)
         await self._race_teardown(ctx)
 
     @race.command(
@@ -247,17 +253,46 @@ class Race(commands.Cog):
         else:
             first, second, = self.winners[ctx.guild.id]
             third = None
-        embed = discord.Embed(colour=color, title="Résultats de la course")
-        embed.add_field(name=f"{first[0].display_name} 🥇", value=first[1].emoji)
-        embed.add_field(name=f"{second[0].display_name} 🥈", value=second[1].emoji)
+        
+        template = Image.open("image/podium.jpg")
+
+        firstavatar = BytesIO(await first[0].display_avatar.with_format("png").read())
+        firstavatar = Image.open(firstavatar)
+        firstavatar = firstavatar.resize((1024, 1024))
+
+        secondavatar = BytesIO(await second[0].display_avatar.with_format("png").read())
+        secondavatar = Image.open(secondavatar)
+        secondavatar = secondavatar.resize((768, 768))
+
         if third:
-            embed.add_field(name=f"{third[0].display_name} 🥉", value=third[1].emoji)
+            thirdavatar = BytesIO(await third[0].display_avatar.with_format("png").read())
+            thirdavatar = Image.open(thirdavatar)
+            thirdavatar = thirdavatar.resize((768, 768))
+
+        template.paste(firstavatar, (2400, 700))
+        template.paste(secondavatar, (1500, 1400))
+        if third:
+            template.paste(thirdavatar, (2200, 1800))
+
+        title = ImageFont.truetype("fonts/CairoPlay-Black.ttf", 400)
+        ranking = ImageDraw.Draw(template)
+
+        ranking.text((1500,10), "Résultats !", (160,210,220), font=title)
+        template.save("image/generated/ranking.png")
+
+        file = discord.File("image/generated/ranking.png")
+        
+        #embed = discord.Embed(colour=color, title="Résultats de la course")
+        #embed.add_field(name=f"{first[0].display_name} 🥇", value=first[1].emoji)
+        #embed.add_field(name=f"{second[0].display_name} 🥈", value=second[1].emoji)
+        #if third:
+        #    embed.add_field(name=f"{third[0].display_name} 🥉", value=third[1].emoji)
         #embed.add_field(name="-" * 90, value="\u200b", inline=False)
         #embed.set_footer(text="Félicitations aux participants !")
         mentions = "" if first[0].bot else f"{first[0].mention}"
         mentions += "" if second[0].bot else f", {second[0].mention}" if not first[0].bot else f"{second[0].mention}"
         mentions += "" if third is None or third[0].bot else f", {third[0].mention}"
-        return mentions, embed
+        return mentions, file
 
     async def _game_setup(self, ctx, zoo: bool):
         users = self.players[ctx.guild.id]
@@ -279,7 +314,7 @@ class Race(commands.Cog):
         track = await ctx.send(setup)
         while not all(animal.position == 0 for animal, jockey in players):
 
-            await asyncio.sleep(2.0)
+            await asyncio.sleep(1.0)
             fields = []
             for animal, jockey in players:
                 if animal.position == 0:

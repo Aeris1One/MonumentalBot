@@ -5,12 +5,17 @@ This is a template to create your own discord bot in python.
 
 Version: 5.3
 """
-
+import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
 from helpers import checks
 
+from PIL import Image
+from io import BytesIO
+from PIL import ImageFont
+from PIL import ImageDraw
+from PIL import ImageOps
 
 # Here we name the cog and create a new class for the cog.
 class Template(commands.Cog, name="template"):
@@ -36,8 +41,35 @@ class Template(commands.Cog, name="template"):
         # Do your stuff here
 
         # Don't forget to remove "pass", I added this just because there's no content in the method.
-        pass
+        await context.defer(ephemeral=True)
 
+        template = Image.open("image/podium.jpg")
+
+        winner = BytesIO(await context.author.display_avatar.with_static_format("png").with_size(1024).read())
+        winner = Image.open(winner)
+        winner = winner.resize((1024, 1024))
+
+        #second = BytesIO(await context.author.display_avatar.with_static_format("png").with_size(1024).read())
+        #second = Image.open(second)
+        second = winner
+        second = second.resize((768, 768))
+
+        #third = BytesIO(await context.author.display_avatar.with_static_format("png").with_size(1024).read())
+        #third = Image.open(second)
+        third = winner
+        third = second.resize((768, 768))
+
+        template.paste(winner, (2400, 700))
+        template.paste(second, (1500, 1300))
+        template.paste(third, (2200, 1800))
+
+        title = ImageFont.truetype("fonts/CairoPlay-Black.ttf", 400)
+        ranking = ImageDraw.Draw(template)
+
+        ranking.text((1500,10), "Résultats !", (160,210,220), font=title)
+        template.save("image/generated/ranking.png")
+
+        await context.send(file=discord.File("image/generated/ranking.png"))
 
 # And then we finally add the cog to the bot so that it can load, unload, reload and use it's content.
 async def setup(bot):
