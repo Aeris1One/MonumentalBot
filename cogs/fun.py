@@ -22,11 +22,11 @@ class IQTestView(discord.ui.View):
         self.value = None
 
     @discord.ui.button(label="Oui", style=discord.ButtonStyle.blurple)
-    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.edit_original_response(content=f"Ton QI est de {random.randint(0, 200)}.", view=None)
 
     @discord.ui.button(label="Non, j'ai un QI de bulot", style=discord.ButtonStyle.blurple)
-    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.edit_original_response(content=f"En effet, tu as un QI de {random.randint(0, 60)}.", view=None)
 
 
