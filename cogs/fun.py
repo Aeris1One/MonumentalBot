@@ -15,8 +15,7 @@ from discord.ext.commands import Context
 
 from helpers import checks
 
-
-class Choice(discord.ui.View):
+class IQTestView(discord.ui.View):
     def __init__(self):
         super().__init__()
         self.value = None
@@ -30,7 +29,6 @@ class Choice(discord.ui.View):
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         self.value = "face"
         self.stop()
-
 
 class RockPaperScissors(discord.ui.Select):
     def __init__(self):
@@ -170,6 +168,22 @@ class Fun(commands.Cog, name="fun"):
         """
         view = RockPaperScissorsView()
         await context.send("Faites un choix !", view=view)
+
+    @commands.hybrid_command(
+        name="IQtest",
+        description="Teste ton QI d'huitre."
+    )
+    @checks.not_blacklisted()
+    async def IQtest(self, context: Context) -> None:
+        """
+        Test de QI.
+
+        :param context: The hybrid command context.
+        """
+        await context.send("Calcul en cours...")
+        await asyncio.sleep(2)
+        await context.edit(f"Ton QI est de {random.randint(0, 200)}.")
+
 
 
 async def setup(bot):
