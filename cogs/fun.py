@@ -21,15 +21,14 @@ class IQTestView(discord.ui.View):
         super().__init__()
         self.value = None
 
-    @discord.ui.button(label="Pile", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Oui", style=discord.ButtonStyle.blurple)
     async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
-        self.value = "pile"
-        self.stop()
+        await interaction.response.edit_message(content=f"Ton QI est de {random.randint(0, 200)}.", view=None)
 
-    @discord.ui.button(label="Face", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Non, j'ai un QI de bulot", style=discord.ButtonStyle.blurple)
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
-        self.value = "face"
-        self.stop()
+        await interaction.response.edit_message(content=f"En effet, tu as un QI de {random.randint(0, 60)}.", view=None)
+
 
 class RockPaperScissors(discord.ui.Select):
     def __init__(self):
@@ -181,9 +180,7 @@ class Fun(commands.Cog, name="fun"):
 
         :param context: The hybrid command context.
         """
-        await context.send("Calcul en cours...")
-        await asyncio.sleep(2)
-        await context.edit(f"Ton QI est de {random.randint(0, 200)}.")
+        await context.send("Êtes-vous sûr ? Ça risque de piquer.", view=IQTestView())
 
 
 
