@@ -170,7 +170,7 @@ class Fun(commands.Cog, name="fun"):
         await context.send("Faites un choix !", view=view)
 
     @commands.hybrid_command(
-        name="IQtest",
+        name="iqtest",
         description="Teste ton QI d'huitre."
     )
     @checks.not_blacklisted()
