@@ -9,6 +9,7 @@ Version: 5.3
 import random
 
 import aiohttp
+import asyncio
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
